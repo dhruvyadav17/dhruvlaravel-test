@@ -9,6 +9,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Date;
 use App\Models\Workshop;
+use Carbon\Carbon;
 class EventsController extends BaseController
 {
     public function getWarmupEvents() {
@@ -181,6 +182,12 @@ class EventsController extends BaseController
      */
 
     public function getFutureEventsWithWorkshops() {
-        throw new \Exception('implement in coding task 2');
+        return Event::select('events.id','events.name','events.created_at','events.updated_at')->with('workshops')
+        ->leftjoin('workshops', 'events.id', '=', 'workshops.event_id')->groupby('events.id')
+      //   ->leftJoin('workshops', function($join) {
+      // $join->on('events.id', '=', 'workshops.event_id');
+      //   })
+        ->whereDate('workshops.start', '>', Carbon::now())->get();
+        //throw new \Exception('implement in coding task 2');
     }
 }
